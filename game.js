@@ -135,6 +135,8 @@ class Game {
         this.input = document.getElementById('input');
         this.scoreElement = document.getElementById('score');
         
+        console.log('Game constructor started');
+        
         // 캔버스 크기 조정 함수
         this.resizeCanvas = () => {
             const container = document.querySelector('.game-container');
@@ -144,6 +146,8 @@ class Game {
             this.canvas.height = rect.height;
             this.backgroundCanvas.width = rect.width;
             this.backgroundCanvas.height = rect.height;
+            
+            console.log('Canvas resized:', rect.width, 'x', rect.height);
         };
         
         // 초기 크기 설정
@@ -156,6 +160,7 @@ class Game {
         this.backgroundImage.src = 'baby_custom.jpg';
         this.backgroundImage.onload = () => {
             this.backgroundReady = true;
+            console.log('Background image loaded');
         };
         this.backgroundImage.onerror = () => {
             this.backgroundReady = false;
@@ -166,6 +171,7 @@ class Game {
         this.congratsImageReady = false;
         this.congratsImage.onload = () => {
             this.congratsImageReady = true;
+            console.log('Congrats image loaded');
         };
         this.congratsImage.onerror = () => {
             this.congratsImageReady = false;
@@ -192,9 +198,13 @@ class Game {
                 this.checkWord();
             }
         });
+        
+        console.log('Starting game loop');
         this.gameLoop();
         this.spawnAllowed = true;
+        console.log('Calling spawnWord');
         this.spawnWord();
+        console.log('Game constructor completed');
     }
 
     drawBackground() {
@@ -290,6 +300,7 @@ class Game {
     }
 
     spawnWord() {
+        console.log('spawnWord called, spawnAllowed:', this.spawnAllowed);
         if (!this.spawnAllowed) return;
         
         // 사용 가능한 단어들 중에서 선택
@@ -305,11 +316,18 @@ class Game {
         const text = availableWords[Math.floor(Math.random() * availableWords.length)];
         this.usedWords.push(text); // 사용된 단어로 추가
         
+        console.log('Creating word:', text);
+        
         const tempWord = new Word(text, 0, 0, 0.2 + Math.random() * 0.3); // 속도 범위를 0.5-1.2에서 0.2-0.5로 줄임
         const maxX = this.canvas.width - tempWord.rectW - 20;
         const x = Math.random() * maxX;
         const speed = 0.2 + Math.random() * 0.3; // 속도 범위를 0.5-1.2에서 0.2-0.5로 줄임
+        
+        console.log('Word position:', x, 'speed:', speed, 'canvas width:', this.canvas.width);
+        
         this.words.push(new Word(text, x, 0, speed));
+        console.log('Total words:', this.words.length);
+        
         setTimeout(() => this.spawnWord(), 5000); // 3초에서 5초로 늘림
     }
 
@@ -346,6 +364,9 @@ class Game {
                 word.y < this.canvas.height && 
                 (!word.popping || word.popOpacity > 0)
             );
+            if (this.words.length > 0) {
+                console.log('Words updated, count:', this.words.length, 'first word y:', this.words[0].y);
+            }
         }
     }
 
@@ -354,6 +375,9 @@ class Game {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (!this.transitionComplete) {
             this.words.forEach(word => word.draw(this.ctx));
+            if (this.words.length > 0) {
+                console.log('Words drawn, count:', this.words.length);
+            }
         }
     }
 
