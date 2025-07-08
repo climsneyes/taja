@@ -254,6 +254,38 @@ class Game {
                 dx, dy, drawW, drawH
             );
             this.backgroundCtx.restore();
+        } else if (this.transitioning) {
+            // 이미지가 로드되지 않았을 때 기본 축하 효과
+            this.transitionAlpha += 0.02;
+            if (this.transitionAlpha > 1) {
+                this.transitionAlpha = 1;
+                this.transitionComplete = true;
+            }
+            
+            // 기본 축하 배경 (그라데이션 + 텍스트)
+            this.backgroundCtx.save();
+            this.backgroundCtx.globalAlpha = this.transitionAlpha;
+            
+            // 축하 그라데이션 배경
+            const gradient = this.backgroundCtx.createLinearGradient(0, 0, 0, this.backgroundCanvas.height);
+            gradient.addColorStop(0, '#ff6b6b');
+            gradient.addColorStop(0.5, '#ffd93d');
+            gradient.addColorStop(1, '#6bcf7f');
+            this.backgroundCtx.fillStyle = gradient;
+            this.backgroundCtx.fillRect(0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height);
+            
+            // 축하 텍스트
+            this.backgroundCtx.fillStyle = '#ffffff';
+            this.backgroundCtx.font = 'bold 48px "Noto Sans KR"';
+            this.backgroundCtx.textAlign = 'center';
+            this.backgroundCtx.textBaseline = 'middle';
+            this.backgroundCtx.shadowColor = 'rgba(0,0,0,0.5)';
+            this.backgroundCtx.shadowBlur = 10;
+            this.backgroundCtx.fillText('축하합니다!', this.backgroundCanvas.width / 2, this.backgroundCanvas.height / 2 - 30);
+            this.backgroundCtx.font = 'bold 24px "Noto Sans KR"';
+            this.backgroundCtx.fillText('인구 감소 대응을 위한 노력이 완료되었습니다!', this.backgroundCanvas.width / 2, this.backgroundCanvas.height / 2 + 30);
+            
+            this.backgroundCtx.restore();
         }
     }
 
