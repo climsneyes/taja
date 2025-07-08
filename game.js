@@ -157,14 +157,25 @@ class Game {
         this.backgroundImage.onload = () => {
             this.backgroundReady = true;
         };
+        this.backgroundImage.onerror = () => {
+            this.backgroundReady = false;
+            console.log('Background image failed to load');
+        };
         this.congratsImage = new Image();
         this.congratsImage.src = 'baby_custom2.png';
         this.congratsImageReady = false;
         this.congratsImage.onload = () => {
             this.congratsImageReady = true;
         };
+        this.congratsImage.onerror = () => {
+            this.congratsImageReady = false;
+            console.log('Congrats image failed to load');
+        };
         this.bgm = new Audio('congrats_bgm.mp3');
         this.bgmPlayed = false;
+        this.bgm.onerror = () => {
+            console.log('Audio file failed to load');
+        };
         this.words = [];
         this.score = 0;
         this.backgroundProgress = 0;
@@ -192,8 +203,11 @@ class Game {
         gradient.addColorStop(1, '#2d2d2d');
         this.backgroundCtx.fillStyle = gradient;
         this.backgroundCtx.fillRect(0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height);
+        
         const segmentHeight = this.backgroundCanvas.height / 10;
         const visibleHeight = segmentHeight * this.backgroundProgress;
+        
+        // 이미지가 로드되었을 때만 그리기
         if (this.backgroundReady && visibleHeight > 0) {
             const canvasW = this.backgroundCanvas.width;
             const canvasH = this.backgroundCanvas.height;
@@ -215,8 +229,9 @@ class Game {
             );
             this.backgroundCtx.restore();
         }
-        // 배경 전환 효과 (contain 방식)
-        if (this.transitioning && this.congratsImageReady) {
+        
+        // 배경 전환 효과 (contain 방식) - 이미지가 로드되었을 때만
+        if (this.transitioning && this.congratsImageReady && this.congratsImage.width > 0) {
             this.transitionAlpha += 0.02;
             if (this.transitionAlpha > 1) {
                 this.transitionAlpha = 1;
@@ -283,8 +298,8 @@ class Game {
             if (this.backgroundProgress === 10 && !this.transitioning) {
                 this.transitioning = true;
                 this.transitionAlpha = 0;
-                if (!this.bgmPlayed) {
-                    this.bgm.play();
+                if (!this.bgmPlayed && this.bgm.readyState >= 2) {
+                    this.bgm.play().catch(e => console.log('Audio play failed:', e));
                     this.bgmPlayed = true;
                 }
                 this.spawnAllowed = false;
