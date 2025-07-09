@@ -386,11 +386,6 @@
                     this.congratsImageReady = false;
                     console.log('Congrats image failed to load');
                 };
-                this.bgm = new Audio('congrats_bgm.mp3');
-                this.bgmPlayed = false;
-                this.bgm.onerror = () => {
-                    console.log('Audio file failed to load');
-                };
                 this.words = [];
                 this.score = 0;
                 this.backgroundProgress = 0;
@@ -557,10 +552,6 @@
                     if (this.backgroundProgress === 10 && !this.transitioning) {
                         this.transitioning = true;
                         this.transitionAlpha = 0;
-                        if (!this.bgmPlayed && this.bgm.readyState >= 2) {
-                            this.bgm.play().catch(e => console.log('Audio play failed:', e));
-                            this.bgmPlayed = true;
-                        }
                         this.spawnAllowed = false;
                     }
                 }

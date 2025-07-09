@@ -23,10 +23,8 @@
     }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|mp3)$", "dest": "/$1.$2" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {
